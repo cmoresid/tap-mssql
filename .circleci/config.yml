@@ -1,0 +1,30 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.6
+        environment:
+          PYMSSQL_BUILD_WITH_BUNDLED_FREETDS: 1
+      - image: microsoft/mssql-server-linux:2017-latest
+        environment:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: pcrRqPv68UVWR6DK]QNU
+          MSSQL_PID: Developer
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            virtualenv -p python3 ~/.virtualenvs/tap-mssql
+            source ~/.virtualenvs/tap-mssql/bin/activate
+            pip install cython
+            pip install .
+            pip install pylint
+            pylint tap_mssql -d C,W,unexpected-keyword-arg,duplicate-code --extension-pkg-whitelist _mssql
+      - run:
+          name: 'Unit Tests'
+          command: |
+            source ~/.virtualenvs/tap-mssql/bin/activate
+            pip install nose
+            TAP_MSSQL_SERVER=localhost TAP_MSSQL_PORT=1433 TAP_MSSQL_USER=sa TAP_MSSQL_PASSWORD=pcrRqPv68UVWR6DK]QNU nosetests
+

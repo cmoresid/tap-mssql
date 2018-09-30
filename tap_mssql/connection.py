@@ -13,7 +13,7 @@ DEFAULT_TDS_VERSION = "7.0"
 DEFAULT_CHARSET = "utf8"
 
 @backoff.on_exception(backoff.expo,
-                      (_mssql.MssqlDatabaseException),
+                      (_mssql.MSSQLDatabaseException),
                       max_tries=5,
                       factor=2)
 def connect_with_backoff(connection, config):
@@ -22,7 +22,7 @@ def connect_with_backoff(connection, config):
 
     return conn
 
-class MSSQLConnection(_mssql.MssqlConnection):
+class MSSQLConnection(_mssql.MSSQLConnection):
     def __init__(self, config):
         args = {
             "server": config["server"],

@@ -10,8 +10,10 @@ setup(
     classifiers=["Programming Language :: Python :: 3 :: Only"],
     py_modules=["tap_mssql"],
     install_requires=[
-        "singer-python>=5.0.12",
-        "requests",
+        "singer-python==5.1.1",
+        "backoff==1.3.2",
+        "pendulum==1.2.0",
+        "pymssql==2.1.4"
     ],
     entry_points="""
     [console_scripts]

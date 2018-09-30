@@ -64,7 +64,6 @@ def get_selected_streams(catalog):
     return selected_streams
 
 def sync(config, state, catalog):
-
     selected_stream_ids = get_selected_streams(catalog)
 
     # Loop over streams in catalog
@@ -74,7 +73,7 @@ def sync(config, state, catalog):
         if stream_id in selected_stream_ids:
             # TODO: sync code for stream goes here...
             LOGGER.info('Syncing stream:' + stream_id)
-    return
+
 
 @utils.handle_top_exception(LOGGER)
 def main():
