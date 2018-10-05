@@ -16,15 +16,15 @@ DEFAULT_CHARSET = "utf8"
                       (_mssql.MSSQLDatabaseException),
                       max_tries=5,
                       factor=2)
-def connect_with_backoff(connection, config):
-    conn = connection(config)
+def connect_with_backoff(connection):
+    conn = connection.connect()
     conn.execute_scalar("SELECT 1 + 1")
 
     return conn
 
-class MSSQLConnection(_mssql.MSSQLConnection):
+class MSSQLConnection:
     def __init__(self, config):
-        args = {
+        self.args = {
             "server": config["server"],
             "user": config["user"],
             "password": config["password"],
@@ -34,14 +34,23 @@ class MSSQLConnection(_mssql.MSSQLConnection):
             "charset": config.get("charset", DEFAULT_CHARSET),
         }
 
-        super().__init__(**args)
-    
+    def connect(self):
+        kwargs = self.args
+        self.connection = _mssql.MSSQLConnection(**kwargs)
+        return self.connection
+
     def __enter__(self):
-        return self
-    
+        return self.connection
+
     def __exit__(self, *exc_info):
         del exc_info
-        self.close()
+        self.connection.close()
 
 def make_connection_wrapper(config):
-    return connect_with_backoff(MSSQLConnection, config)
+    # pylint: disable=too-few-public-methods
+    class ConnectionWrapper(MSSQLConnection):
+        def __init__(self, *args, **kwargs):
+            super().__init__(config)
+            connect_with_backoff(self)
+
+    return ConnectionWrapper

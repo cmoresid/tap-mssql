@@ -35,4 +35,6 @@ def get_test_connection():
 
     db_config['database'] = DB_NAME
 
-    return connect_with_backoff(MSSQLConnection, db_config)
+    mssql_conn = MSSQLConnection(db_config)
+
+    return mssql_conn
