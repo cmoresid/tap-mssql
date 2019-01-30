@@ -1,0 +1,23 @@
+version: '2'
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment:
+      ACCEPT_EULA: 'Y'
+      SA_PASSWORD: 'k2Bg27GE'
+      MSSQL_PID: 'Developer'
+    ports:
+      - "1433:1433"
+
+  target-mssql:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      MSSQL_HOST: 'db'
+      MSSQL_DATABASE: 'target_mssql_test'
+      MSSQL_USERNAME: 'sa'
+      MSSQL_PASSWORD: 'k2Bg27GE'
+
+    volumes:
+      - .:/code
